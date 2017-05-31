@@ -11,8 +11,9 @@ class FromArrayDecorator
         $this->_engine = $engine;
     }
 
-    public function toString()
+    public function toString($data)
     {
+        $this->_engine->setData($data);
         return $this->_engine->render();
     }
 }

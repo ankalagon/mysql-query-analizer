@@ -32,7 +32,10 @@ class Connection
         $this->_connection = new \PDO(
             sprintf('mysql:host=%s;port=%s;dbname=%s', $hostname, $port, $database),
             $user,
-            $password
+            $password,
+            [
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
+            ]
         );
     }
 
@@ -43,6 +46,29 @@ class Connection
     public function switchOnProfiling()
     {
         return (bool) $this->_connection->query('SET profiling=1');
+    }
+
+    /**
+     * Flush status from mysql stats
+     * @return bool
+     */
+    public function flushStatus()
+    {
+        return (bool) $this->_connection->query('FLUSH STATUS');
+    }
+
+    public function showStatus($query)
+    {
+        $this->_connection->query($query);
+        $result = $this->_connection->query('SHOW STATUS WHERE `variable_name` LIKE \'Handler%\' OR `variable_name` LIKE \'Created%\'');
+
+        $tmpData = [];
+        while ($row = $result->fetch(\PDO::FETCH_ASSOC)) {
+            $tmpData[] = $row;
+        }
+
+        return $tmpData;
+
     }
 
     public function profileQuery($query)
