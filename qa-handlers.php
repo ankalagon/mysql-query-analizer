@@ -15,7 +15,6 @@ $cli->description('Mysql Query Profiling Tool')
     ->opt('password:p', 'Password to use when connecting to database.', true)
     ->opt('database:d', 'The name of the database to use.', true)
     ->opt('format:f', sprintf('Format to output (default: %s), available formats: %s', AvailableDecorators::getDecorators()[0], implode(',', AvailableDecorators::getDecorators())))
-    ->opt('query:q', 'Query to analyze', true)
     ->opt('verbose:v', 'Set additional information about handlers', false, 'boolean', 'v');
 
 $logFormatter = new LogFormatter();
@@ -27,9 +26,10 @@ $port = $args->getOpt('port');
 $user = $args->getOpt('user');
 $password = $args->getOpt('password');
 $database = $args->getOpt('database');
-$query = $args->getOpt('query');
 $format = $args->getOpt('format');
 $verbose = $args->getOpt('verbose');
+
+$query = trim(fgets(STDIN));
 
 try {
     if (!$format) {
